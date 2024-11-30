@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from bs4 import BeautifulSoup
 import requests
 import lxml
-
+import os
 
 
 
@@ -35,6 +35,7 @@ def greet():
 
 # Start the server
 if __name__ == '__main__':
-    app.run(debug=True) 
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port) 
 
 #https://mpi.mashie.com/public/menu/kk+%C3%A4lvsj%C3%B6/8a1fcfe5
