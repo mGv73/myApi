@@ -24,9 +24,9 @@ print(span.text)
 
 
 
-
-
-
+@app.route('/')
+def home():
+    return "Welcome to my API!"
 
 @app.route('/api/food', methods=['GET'])
 def greet():
