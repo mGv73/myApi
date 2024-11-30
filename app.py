@@ -1,54 +1,42 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request, Response, json
 from bs4 import BeautifulSoup
 import requests
 import lxml
 import os
-
-
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
 def fetch_food_data():
-    # Scrape the external website
     preUrl = "https://www.kleinskitchen.se/skolor/ies-huddinge/"
     prePage = requests.get(preUrl)
-    
-    # Check if request was successful
-    if prePage.status_code != 200:
-        return "Error fetching the page"
 
     preSoup = BeautifulSoup(prePage.text, 'lxml')
     divs = preSoup.find('div', class_='embed-container')
-    
-    if divs is None:
-        return "Unable to find the embedded container"
 
     iframe = divs.find('iframe')
-    if iframe is None or 'src' not in iframe.attrs:
-        return "No iframe found with src attribute"
 
     url = iframe['src']
-    page = requests.get(url)
-    
-    # Check if iframe page request was successful
-    if page.status_code != 200:
-        return "Error fetching the iframe page"
+    page = requests.get(url)  
 
     soup = BeautifulSoup(page.text, 'lxml')
     days = soup.find_all('div', class_='row no-print day-alternative-wrapper')
 
-    if len(days) < 13:
-        return "Insufficient days data"
-
-    day = days[12]  # Fetch the 13th day
-    span = day.find('span')
-    
-    if span is None:
-        return "No menu data available"
+    number = set_day()
+    if number >= 15:
+        return "Other food"
+    else:
+        day = days[number]
+        span = day.find('span')
 
     return span.text
 
-
+def set_day ():
+    utc = datetime.utcnow()
+    cet_now = utc + timedelta(hours=1)
+    weekday = cet_now.weekday()
+    number = (weekday - 1) * 3
+    return number
 
 
 @app.route('/')
@@ -58,7 +46,8 @@ def home():
 @app.route('/api/food', methods=['GET'])
 def get_food():
     food_data = fetch_food_data()
-    return jsonify({"food": food_data})
+    response = json.dumps({"food": food_data}, ensure_ascii=False)
+    return Response(response, content_type="application/json; charset=utf-8")
 
 # Start the server
 if __name__ == '__main__':
