@@ -35,7 +35,7 @@ def set_day ():
     utc = datetime.utcnow()
     cet_now = utc + timedelta(hours=1)
     weekday = cet_now.weekday()
-    number = (weekday - 1) * 3
+    number = (2 - 1) * 3
     return number
 
 
