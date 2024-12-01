@@ -22,7 +22,7 @@ def fetch_food_data():
     soup = BeautifulSoup(page.text, 'lxml')
     days = soup.find_all('div', class_='row no-print day-alternative-wrapper')
 
-    number = set_day()
+    number = (set_day() - 1) * 3
     if number >= 15:
         return "Other food"
     else:
@@ -31,12 +31,17 @@ def fetch_food_data():
 
     return span.text
 
+def fetch_training_data():
+    trainings = ['Smolov Jr', 'Team training', 'Smolov Jr and back + biceps', 'Team training', 'Smolov Jr', 'Legs', 'Team technique training']
+    number = set_day()
+    training = trainings[number]
+    return training
+
 def set_day ():
     utc = datetime.utcnow()
     cet_now = utc + timedelta(hours=1)
     weekday = cet_now.weekday()
-    number = (weekday - 1) * 3
-    return number
+    return weekday
 
 
 @app.route('/')
@@ -47,6 +52,12 @@ def home():
 def get_food():
     food_data = fetch_food_data()
     response = json.dumps({"food": food_data}, ensure_ascii=False)
+    return Response(response, content_type="application/json; charset=utf-8")
+
+@app.route('/api/training', methods=['GET'])
+def get_training():
+    training_data = fetch_training_data()
+    response = json.dumps({"training": training_data}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
 # Start the server
