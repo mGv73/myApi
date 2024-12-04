@@ -22,7 +22,7 @@ def fetch_food_data():
     soup = BeautifulSoup(page.text, 'lxml')
     days = soup.find_all('div', class_='row no-print day-alternative-wrapper')
 
-    number = (set_day() - 1) * 3
+    number = (set_day()) * 3
     if number >= 15:
         return "Other food"
     else:
