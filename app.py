@@ -3,11 +3,11 @@ from bs4 import BeautifulSoup
 import requests
 import lxml
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 app = Flask(__name__)
 
-def fetch_food_data():
+def fetch_food_data(day):
     preUrl = "https://www.kleinskitchen.se/skolor/ies-huddinge/"
     prePage = requests.get(preUrl)
 
@@ -22,7 +22,18 @@ def fetch_food_data():
     soup = BeautifulSoup(page.text, 'lxml')
     days = soup.find_all('div', class_='row no-print day-alternative-wrapper')
 
-    number = (set_day()) * 3
+    number = set_day() * 3
+    if day == "monday":
+        number = 0
+    elif day == "tuesday":
+        number = 3
+    elif day == "wednesday":
+        number = 6
+    elif day == "thursday":
+        number = 9
+    elif day == "friday":
+        number = 12
+
     if number >= 15:
         return "Other food"
     else:
@@ -38,7 +49,7 @@ def fetch_training_data():
     return training
 
 def set_day ():
-    utc = datetime.utcnow()
+    utc = datetime.now(timezone.utc)
     cet_now = utc + timedelta(hours=1)
     weekday = cet_now.weekday()
     return weekday
@@ -50,7 +61,8 @@ def home():
 
 @app.route('/api/food', methods=['GET'])
 def get_food():
-    food_data = fetch_food_data()
+    day = request.args.get('day', 'today')
+    food_data = fetch_food_data(day)
     response = json.dumps({"food": food_data}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
