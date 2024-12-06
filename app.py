@@ -7,6 +7,15 @@ from datetime import datetime, timedelta, timezone
 
 app = Flask(__name__)
 
+def translate_text(text):
+    url = "https://mymemory.translated.net/api/get"
+    params = {
+        "q": text,
+        "langpair": f"sv|en"
+    }
+    response = requests.get(url, params=params)
+    return response.json()["responseData"]["translatedText"]
+
 def fetch_food_data(day):
     preUrl = "https://www.kleinskitchen.se/skolor/ies-huddinge/"
     prePage = requests.get(preUrl)
@@ -62,7 +71,8 @@ def home():
 @app.route('/api/food', methods=['GET'])
 def get_food():
     day = request.args.get('day', 'today')
-    food_data = fetch_food_data(day)
+    food_data_raw = fetch_food_data(day)
+    food_data = translate_text(food_data_raw)
     response = json.dumps({"food": food_data}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
