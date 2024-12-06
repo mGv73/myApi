@@ -31,6 +31,8 @@ def fetch_food_data(day):
     soup = BeautifulSoup(page.text, 'lxml')
     days = soup.find_all('div', class_='row no-print day-alternative-wrapper')
 
+    
+
     number = set_day() * 3
     if day == "monday":
         number = 0
@@ -42,14 +44,19 @@ def fetch_food_data(day):
         number = 9
     elif day == "friday":
         number = 12
+    elif day == "saturday":
+        number = 15
+    elif day == "sunday":
+        number = 15
+
+    day = days[number]
+    span = day.find('span')
+    text = span.text
 
     if number >= 15:
-        return "Other food"
+        return f"Food on monday is: {translate_text(text)}"
     else:
-        day = days[number]
-        span = day.find('span')
-
-    return span.text
+        return f"Food today is: {translate_text(text)}"
 
 def fetch_training_data():
     trainings = ['Smolov Jr', 'Team training', 'Smolov Jr and back + biceps', 'Team training', 'Smolov Jr', 'Legs', 'Team technique training']
