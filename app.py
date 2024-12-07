@@ -4,8 +4,36 @@ import requests
 import lxml
 import os
 from datetime import datetime, timedelta, timezone
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+#from dotenv import load_dotenv
 
+#load_dotenv()
 app = Flask(__name__)
+
+
+EMAIL_ADDRESS=os.environ.get('EMAIL_ADDRESS')
+EMAIL_PASSWORD=os.environ.get('EMAIL_PASSWORD')
+SMTP_SERVER=os.environ.get('SMTP_SERVER')
+SMTP_PORT=int(os.environ.get('SMTP_PORT'))
+RECEIVER_EMAIL=os.environ.get('RECEIVER_EMAIL')
+
+def send_mail():
+    # Create the email content
+    msg = MIMEMultipart()
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = RECEIVER_EMAIL
+    msg['Subject'] = "Test Email"
+    body = "This is a test email sent using a Python script with fake credentials."
+    msg.attach(MIMEText(body, 'plain'))
+        
+    # Connect to the server and send the email
+    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+        server.starttls()  # Secure the connection
+        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        server.send_message(msg)
+        print(f"Email sent to {RECEIVER_EMAIL}")
 
 def translate_text(text):
     url = "https://mymemory.translated.net/api/get"
@@ -64,7 +92,7 @@ def fetch_training_data():
     training = trainings[number]
     return training
 
-def set_day ():
+def set_day():
     utc = datetime.now(timezone.utc)
     cet_now = utc + timedelta(hours=1)
     weekday = cet_now.weekday()
@@ -74,6 +102,11 @@ def set_day ():
 @app.route('/')
 def home():
     return "Welcome to my API!"
+
+@app.route('/mail')
+def mail():
+    send_mail()
+    return "Welcome to my API!"  
 
 @app.route('/api/food', methods=['GET'])
 def get_food():
