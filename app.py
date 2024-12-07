@@ -103,10 +103,10 @@ def set_day():
 def home():
     return "Welcome to my API!"
 
-@app.route('/mail')
+@app.route('/mail', methods=['GET'])
 def mail():
     send_mail()
-    return "Welcome to my API!"  
+    return "Sent mail!"  
 
 @app.route('/api/food', methods=['GET'])
 def get_food():
