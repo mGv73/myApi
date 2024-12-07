@@ -116,8 +116,7 @@ def mail():
 @app.route('/mail/content', methods=['GET'])
 def get_mail():
     global content
-    response = json.dumps({"content": content}, ensure_ascii=False)
-    return Response(response, content_type="application/json; charset=utf-8")
+    return content
 
 @app.route('/api/food', methods=['GET'])
 def get_food():
