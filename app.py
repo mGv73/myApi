@@ -103,10 +103,21 @@ def set_day():
 def home():
     return "Welcome to my API!"
 
+content = 'No content'
+
 @app.route('/mail', methods=['GET'])
 def mail():
+    global content
     send_mail()
-    return "Sent mail!"  
+    mail = request.args.get('content', 'No content')
+    content = mail
+    return f"Sent mail (trigger) with content: {content}" 
+
+@app.route('/mail/content', methods=['GET'])
+def get_mail():
+    global content
+    response = json.dumps({"content": content}, ensure_ascii=False)
+    return Response(response, content_type="application/json; charset=utf-8")
 
 @app.route('/api/food', methods=['GET'])
 def get_food():
