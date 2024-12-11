@@ -12,29 +12,6 @@ from email.mime.multipart import MIMEMultipart
 #load_dotenv()
 app = Flask(__name__)
 
-
-EMAIL_ADDRESS=os.environ.get('EMAIL_ADDRESS')
-EMAIL_PASSWORD=os.environ.get('EMAIL_PASSWORD')
-SMTP_SERVER=os.environ.get('SMTP_SERVER')
-SMTP_PORT=int(os.environ.get('SMTP_PORT'))
-RECEIVER_EMAIL=os.environ.get('RECEIVER_EMAIL')
-
-def send_mail():
-    # Create the email content
-    msg = MIMEMultipart()
-    msg['From'] = EMAIL_ADDRESS
-    msg['To'] = RECEIVER_EMAIL
-    msg['Subject'] = "Test Email"
-    body = "This is a test email sent using a Python script with fake credentials."
-    msg.attach(MIMEText(body, 'plain'))
-        
-    # Connect to the server and send the email
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()  # Secure the connection
-        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        server.send_message(msg)
-        print(f"Email sent to {RECEIVER_EMAIL}")
-
 def translate_text(text):
     url = "https://mymemory.translated.net/api/get"
     params = {
@@ -62,6 +39,9 @@ def fetch_food_data(day):
     
 
     number = set_day() * 3
+    if number > 15:
+        number = 15
+
     if day == "monday":
         number = 0
     elif day == "tuesday":
@@ -102,21 +82,6 @@ def set_day():
 @app.route('/')
 def home():
     return "Welcome to my API!"
-
-content = 'No content'
-
-@app.route('/mail', methods=['GET'])
-def mail():
-    global content
-    send_mail()
-    mail = request.args.get('content', 'No content')
-    content = mail
-    return f"Sent mail (trigger) with content: {content}" 
-
-@app.route('/mail/content', methods=['GET'])
-def get_mail():
-    global content
-    return content
 
 @app.route('/api/food', methods=['GET'])
 def get_food():
