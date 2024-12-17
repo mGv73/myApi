@@ -4,12 +4,11 @@ import requests
 import lxml
 import os
 from datetime import datetime, timedelta, timezone
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-#from dotenv import load_dotenv
+import socket
+import struct
 
-#load_dotenv()
+target_mac = os.environ.get('TARGET_MAC')
+
 app = Flask(__name__)
 
 def translate_text(text):
@@ -78,10 +77,28 @@ def set_day():
     weekday = cet_now.weekday()
     return weekday
 
+def wake_on_lan(mac_address):
+    mac_address = mac_address.replace(":", "").replace("-", "").replace(".", "")
+    
+    if len(mac_address) != 12:
+        raise ValueError("Invalid MAC address format")
+    
+    mac_bytes = bytes.fromhex(mac_address)
+    magic_packet = b'\xff' * 6 + mac_bytes * 16  # 6 FF bytes followed by 16 repetitions of the MAC address
+
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        s.sendto(magic_packet, ('<broadcast>', 9))
+        print("Magic Packet sent to:", mac_address)
 
 @app.route('/')
 def home():
     return "Welcome to my API!"
+
+@app.route('/vol', methods=['GET'])
+def vol():
+    wake_on_lan(target_mac)
+    return f"Sent magic packet!"
 
 @app.route('/api/food', methods=['GET'])
 def get_food():
