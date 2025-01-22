@@ -23,14 +23,6 @@ def translate_text(text):
     response = requests.get(url, params=params)
     return response.json()["responseData"]["translatedText"]
 
-def set_food_data():
-    global foodToday
-    global foodTodaySv
-    foodTodaySv = fetch_food_data(1, "sv")
-    foodToday = fetch_food_data(1, "en")
-
-set_food_data()
-
 def fetch_food_data(day, lan):
     preUrl = "https://www.kleinskitchen.se/skolor/ies-huddinge/"
     prePage = requests.get(preUrl)
@@ -79,7 +71,14 @@ def fetch_food_data(day, lan):
             return f"Mat idag är: {text}"
         else:
             return f"Food today is: {translate_text(text)}"
-        
+
+def set_food_data():
+    global foodToday
+    global foodTodaySv
+    foodTodaySv = fetch_food_data(123, "sv")
+    foodToday = fetch_food_data(123, "en")
+
+set_food_data()
 
 def fetch_training_data():
     trainings = ['Smolov Jr', 'Team training', 'Smolov Jr and back + biceps', 'Team training', 'Smolov Jr', 'Legs', 'Team technique training']
@@ -104,7 +103,7 @@ def vol():
 
 @app.route('/api/food', methods=['GET'])
 def get_food():
-    global foodToday
+    day = request.args.get('day', 'today')
     response = json.dumps({"food": foodToday}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
