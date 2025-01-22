@@ -125,4 +125,4 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port) 
 
-schedule.every().day.at("03:00").do(set_food_data)
+#schedule.every().day.at("03:00").do(set_food_data)
