@@ -102,14 +102,14 @@ def vol():
     return f"Sent magic packet!"
 
 @app.route('/api/food', methods=['GET'])
-global foodToday
 def get_food():
+    global foodToday
     response = json.dumps({"mat": foodToday}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
 @app.route('/api/food/sv', methods=['GET'])
-global foodTodaySv
 def get_food_sv():
+    global foodTodaySv
     response = json.dumps({"food": foodTodaySv}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
