@@ -26,9 +26,8 @@ def translate_text(text):
 def set_food_data():
     global foodToday
     global foodTodaySv
-    day = request.args.get('day', 'today')
-    foodTodaySv = fetch_food_data(day, "sv")
-    foodToday = fetch_food_data(day, "en")
+    foodTodaySv = fetch_food_data(1, "sv")
+    foodToday = fetch_food_data(1, "en")
 
 set_food_data()
 
@@ -121,8 +120,8 @@ def get_training():
     response = json.dumps({"training": training_data}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
+schedule.every().day.at("03:00").do(set_food_data)
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port) 
-
-#schedule.every().day.at("03:00").do(set_food_data)
