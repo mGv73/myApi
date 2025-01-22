@@ -72,6 +72,12 @@ def fetch_food_data(day, lan):
         else:
             return f"Food today is: {translate_text(text)}"
 
+def set_day():
+    utc = datetime.now(timezone.utc)
+    cet_now = utc + timedelta(hours=1)
+    weekday = cet_now.weekday()
+    return weekday
+
 def set_food_data():
     global foodToday
     global foodTodaySv
@@ -85,12 +91,6 @@ def fetch_training_data():
     number = set_day()
     training = trainings[number]
     return training
-
-def set_day():
-    utc = datetime.now(timezone.utc)
-    cet_now = utc + timedelta(hours=1)
-    weekday = cet_now.weekday()
-    return weekday
 
 @app.route('/')
 def home():
@@ -119,7 +119,7 @@ def get_training():
     response = json.dumps({"training": training_data}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
-#schedule.every().day.at("03:00").do(set_food_data)
+schedule.every().day.at("03:00").do(set_food_data)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
