@@ -13,7 +13,6 @@ app = Flask(__name__)
 
 foodToday = "Not yet"
 foodTodaySv = "Inte än"
-set_food_data()
 
 def translate_text(text):
     url = "https://mymemory.translated.net/api/get"
@@ -30,6 +29,8 @@ def set_food_data():
     day = request.args.get('day', 'today')
     foodTodaySv = fetch_food_data(day, "sv")
     foodToday = fetch_food_data(day, "en")
+
+set_food_data()
 
 def fetch_food_data(day, lan):
     preUrl = "https://www.kleinskitchen.se/skolor/ies-huddinge/"
