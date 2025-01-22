@@ -119,7 +119,7 @@ def get_training():
     response = json.dumps({"training": training_data}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
-schedule.every().day.at("03:00").do(set_food_data)
+#schedule.every().day.at("03:00").do(set_food_data)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
