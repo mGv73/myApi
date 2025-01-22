@@ -103,13 +103,12 @@ def vol():
 
 @app.route('/api/food', methods=['GET'])
 def get_food():
-    day = request.args.get('day', 'today')
-    response = json.dumps({"food": foodToday}, ensure_ascii=False)
+    response = json.dumps({"mat": foodToday}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
 @app.route('/api/food/sv', methods=['GET'])
 def get_food_sv():
-    global foodTodaySv
+    #global foodTodaySv
     response = json.dumps({"food": foodTodaySv}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
