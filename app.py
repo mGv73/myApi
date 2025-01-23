@@ -106,6 +106,11 @@ def get_food_sv():
     response = json.dumps({"food": foodTodaySv}, ensure_ascii=False)
     return Response(response, content_type="application/json; charset=utf-8")
 
+@app.route('/api/refresh', methods=['GET'])
+def set_the_data():
+    set_food_data()
+    return "Refreshed data!"
+
 @app.route('/api/training', methods=['GET'])
 def get_training():
     training_data = fetch_training_data()
